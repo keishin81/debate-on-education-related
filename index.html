@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ABEMA Prime 教育トピック別 動画一覧</title>
+<style>
+  :root{--bg:#faf9f6;--ink:#1f2328;--muted:#6b7078;--line:#e4e2dc;--card:#fff;--accent:#c2410c;--a2:#2563eb;--a3:#9ca3af;}
+  @media (prefers-color-scheme: dark){:root{--bg:#17181a;--ink:#e8e6e1;--muted:#9a9ea6;--line:#2c2e32;--card:#1f2124;--accent:#fb923c;--a2:#60a5fa;--a3:#6b7280;}}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:"Hiragino Sans","Noto Sans JP","Yu Gothic",system-ui,sans-serif;line-height:1.65}
+  .wrap{max-width:1000px;margin:0 auto;padding:32px 20px 64px}
+  h1{font-size:1.6rem;margin:0 0 6px;letter-spacing:.02em}
+  .sub{color:var(--muted);font-size:.9rem;margin:0 0 20px}
+  .legend{display:flex;flex-wrap:wrap;gap:14px;font-size:.85rem;color:var(--muted);margin-bottom:18px}
+  .controls{position:sticky;top:0;z-index:5;background:var(--bg);padding:12px 0;border-bottom:1px solid var(--line);display:flex;gap:10px;flex-wrap:wrap}
+  select,input{font:inherit;font-size:.9rem;padding:8px 10px;border:1px solid var(--line);border-radius:8px;background:var(--card);color:var(--ink)}
+  input{flex:1;min-width:180px}
+  .count{align-self:center;font-size:.85rem;color:var(--muted)}
+  section{margin-top:28px}
+  h2{font-size:1.05rem;margin:0 0 10px;display:flex;gap:10px;align-items:baseline}
+  h2 .no{color:var(--accent);font-variant-numeric:tabular-nums;font-weight:700}
+  h2 .part{font-size:.75rem;color:var(--muted);font-weight:400}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:14px 16px;margin-bottom:10px}
+  .top{display:flex;gap:10px;align-items:flex-start}
+  .badge{flex:none;width:26px;height:26px;border-radius:50%;display:grid;place-items:center;font-size:.85rem;font-weight:700;color:#fff}
+  .b-◎{background:var(--accent)} .b-○{background:var(--a2)} .b-△{background:var(--a3)}
+  .title{font-weight:600;font-size:.95rem}
+  .title a{color:inherit;text-decoration:none;border-bottom:1px dotted var(--muted)}
+  .title a:hover{color:var(--accent)}
+  .theme{display:inline-block;font-size:.78rem;padding:1px 8px;border-radius:999px;background:color-mix(in srgb,var(--accent) 12%,transparent);color:var(--accent);margin:6px 0 4px}
+  .ov{font-size:.88rem;margin:2px 0 0}
+  .note{color:var(--muted);font-size:.82rem}
+  .meta{font-size:.78rem;color:var(--muted);margin-top:6px}
+  .foot{margin-top:40px;font-size:.8rem;color:var(--muted);border-top:1px solid var(--line);padding-top:14px}
+  .figbtn{margin-top:10px;font:inherit;font-size:.82rem;padding:6px 12px;border:1px solid var(--accent);color:var(--accent);background:transparent;border-radius:999px;cursor:pointer}
+  .figbtn[aria-expanded="true"]{background:var(--accent);color:#fff}
+  .figbox{margin-top:10px}
+  .fig{display:block;padding:0;border:1px solid var(--line);border-radius:8px;overflow:hidden;background:none;cursor:zoom-in;width:100%}
+  .fig img{display:block;width:100%;height:auto}
+  .card.has-fig .top{flex-wrap:nowrap}
+  .lb{position:fixed;inset:0;background:rgba(0,0,0,.85);display:none;align-items:center;justify-content:center;z-index:50;padding:16px;flex-direction:column;gap:10px}
+  .lb.open{display:flex}
+  .lb img{max-width:100%;max-height:calc(100vh - 80px);border-radius:6px;background:#fff}
+  .lb .bar{display:flex;gap:16px;align-items:center;color:#eee;font-size:.85rem}
+  .lb a,.lb button{color:#fff;background:rgba(255,255,255,.15);border:0;border-radius:6px;padding:6px 12px;font:inherit;font-size:.85rem;cursor:pointer;text-decoration:none}
+  label.chk{align-self:center;font-size:.85rem;display:flex;gap:4px;align-items:center}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>ABEMA Prime 教育トピック別 動画一覧</h1>
+  <p class="sub">ABEMA Prime #アベプラ【公式】YouTubeチャンネルから、教育に関する21トピックごとに関連動画をまとめたものです。図解（PNG）がある動画は「インフォグラフィックを表示」を押すと表示されます。</p>
+  <div class="legend">
+    <span><b style="color:var(--accent)">◎</b> トピックを正面から扱う</span>
+    <span><b style="color:var(--a2)">○</b> 関連する内容を扱う</span>
+    <span><b style="color:var(--a3)">△</b> 直接の動画が見つからず、一部で触れるもの</span>
+  </div>
+  <div class="controls">
+    <select id="topic"><option value="">すべてのトピック</option></select>
+    <select id="rel"><option value="">関連度：すべて</option><option>◎</option><option>○</option><option>△</option></select>
+    <input id="q" type="search" placeholder="キーワードで絞り込み（例：AI、不登校）">
+    <label class="chk"><input type="checkbox" id="figonly" style="min-width:0;flex:none">図解ありのみ</label>
+    <span class="count" id="count"></span>
+  </div>
+  <div id="list"></div>
+  <div class="lb" id="lb" role="dialog" aria-modal="true"><img id="lbimg" alt=""><div class="bar"><span id="lbcap"></span><a id="lbopen" href="#" target="_blank" rel="noopener">原寸で開く</a><button id="lbclose" type="button">閉じる（Esc）</button></div></div>
+  <p class="foot">概要は動画タイトル・説明欄（出演者）からまとめたもので、動画本編は未確認です。公開時期は検索結果からの目安。YouTube版には掲載期限があり、特に古い回は削除されている場合があります。（2026年11月作成）</p>
+</div>
+<script>
+const PARTS={1:"Part I 日本の教育のあり方",3:"Part II 変化する教育環境",7:"Part III 学校の抱える問題",10:"Part IV 子どものトラブル",13:"Part V 教師",17:"Part VI 教科",20:"Part VII 学校の社会的役割"};
+const D=[
+[1,"日本の戦後教育","○","【○○世代】Z、ゆとり、団塊Jr.、時代に翻弄され生きづらい？なぜ世代でくくりたがる？｜アベプラ","世代論とゆとり教育","ゆとり世代・Z世代など、受けた教育や時代背景で人をくくる風潮の是非と、世代ごとの生きづらさを議論。","2024年11月頃","hzkuQmDD94g"],
+[1,"日本の戦後教育","○","【飛び級】悪しき横並び教育は誰のため？受験戦争から離脱して学歴を得る裏技は？成田悠輔＆気鋭学者と考える｜#アベプラ","画一的な横並び教育の是非","成田悠輔氏らと、一律の学年制や受験競争といった日本の教育の画一性を問い直し、飛び級の可能性を議論。","2022年4月頃","mRYbSq2ZAkM"],
+[2,"これからの教育・AIの活用","◎","【生成AI×教育】小中学校でマストに？言語力に影響は？何歳から触れさせる？文科省案を考える｜アベプラ","学校での生成AI活用","文科省案を受け、公立小教諭やAI研究者が、学校へのAI導入の是非、言語力への影響、何歳から触れさせるかを議論。","2026年7月頃","3ETI3yQg6Pk"],
+[2,"これからの教育・AIの活用","◎","【子ども×生成AI】小学生にChatGPTは早い？「AI学習は脳に大きな打撃」説明も…親子のAI学習法と思考力を育てる教育｜アベプラ","子どものAI利用と思考力低下","AI活用講座を開く母親と発達心理学者（内田伸子氏）らが、AIに頼ることの思考力への影響と家庭での付き合い方を議論。","2026年9月頃","lP4XAclYTeg"],
+[2,"これからの教育・AIの活用","◎","【英語教育】話せるだけじゃダメ？AI時代に学ぶ意味は？結局、いつから学べばいいの？｜アベプラ","自動翻訳時代に英語を学ぶ意義","翻訳AIが普及する中で英語を学ぶ意味、「話せる」以上に必要な力、学び始める時期を議論（No.17にも該当）。","2026年1月","kx1ZYjXPJFo"],
+[3,"男女の多様性","◎","【入試の女子枠】性別フィルターはダメ？実力主義であるべき？理系はなぜ女性に憧れられない？｜アベプラ","理工系入試の女子枠","大学生や理工学部教授らが、女子枠の公平性と、理系が女子に選ばれにくい背景（固定観念など）を議論。","2026年4月頃","tJ4Srev19EI"],
+[3,"男女の多様性","○","【ひろゆき×4人の女性研究者】日本はなぜ少ない？脱理系の背景に同調圧力？子育て⇔研究の両立はムリゲー？｜アベプラ","女性研究者が少ない理由","女性研究者4人が、女子が理系を離れる背景にある同調圧力や、研究と子育ての両立の難しさを語る。","2026年1月頃","-88s-twqJ_8"],
+[3,"男女の多様性","◎","【保健体育】「異性」→「他者」表記へ？学習指導要領めぐり署名提出。LGBTQの明記すべき？何歳から教える？｜アベプラ","性の多様性と学校教育","トランスジェンダー当事者と中学校教師らが、学習指導要領の「異性」表記の見直しやLGBTQ教育の時期を議論。","2026年7月頃","_vH9y9772Ec"],
+[4,"外国人との共生","◎","【外国籍児】“ホームレス化“”ギャング化“する若者も…義務教育が適用されない外国籍児の苦悩とは？｜#アベプラ","外国籍の子どもの就学問題","義務教育の対象外である外国籍の子どもが不就学・孤立に陥る実態と、必要な支援を議論。","2020年頃","K_5F2sIiOxw"],
+[4,"外国人との共生","○","【アベマ同時配信中】「外国人学校なぜ無償化の対象外に？元文科大臣と議論」11/3(月)｜アベプラ","外国人学校と無償化","外国人学校が授業料無償化の対象外となっている問題を元文科大臣と議論（生放送の全編アーカイブ）。","2025年11月","eqpFjUi1-wo"],
+[5,"特別支援教育の多様性","◎","【特別支援学級】障害のある子を「分ける」のは差別？「ひまわり組」名称に疑問の声も…担任・保護者と考える｜アベプラ","特別支援学級とインクルーシブ教育","支援学級に子を通わせる保護者、支援学級担任、教育学者（小国喜弘氏）らが、学びの場を「分ける」ことの是非を議論。","2026年9月頃","kiJGdVhSrZk"],
+[6,"SNSのリスクとメディア・リテラシー","◎","【SNS禁止法】無菌社会はリスク？こどものSNSは規制すべきなのか│アベプラ","子どものSNS規制","海外の年齢制限法を踏まえ、脳科学者と年齢規制に反対する若者らが、規制か教育（リテラシー）かを議論。","2025年12月頃","eJKc5U1fiWw"],
+[7,"教育格差","◎","【教育格差】EXIT兼近「大人になって気付いた」生まれた環境で人生が決まる？オンライン化で広がる教育格差【新型コロナ】｜#アベプラ","家庭環境と教育格差","EXIT兼近氏の体験を交え、生まれた家庭環境で学力や進路が決まる構造と、コロナ禍のオンライン化で広がる格差を議論。","2020年頃","bKXY_cuR67U"],
+[7,"教育格差","◎","【生活保護】「お金」「ヤングケアラー」「世帯分離」大学進学に3つの壁…生活保護世帯で育ち東大へ進んだ当事者と考える｜アベプラ","貧困世帯の大学進学","生活保護世帯から東大へ進んだ当事者と、子どもの貧困対策議連の議員らが、進学を阻む制度の壁と支援策を議論（No.8にも関連）。","2026年9月頃","_Uh_NK6oZVg"],
+[7,"教育格差","○","【こどもの体験格差】「夏休みツラい」こどもたちの孤立…誰が？どう機会を増やす？｜アベプラ","子どもの体験格差","家庭の経済力によって旅行や習い事などの体験に差が生まれる問題と、機会を増やす方策を議論。","2026年7月頃","u87TE-G_lo0"],
+[8,"苦しむ児童生徒","◎","【ヤングケアラー】4人に1人「学校に伝えないで」…当事者の複雑な思い 行政はどう介入・支援すれば？｜アベプラ","ヤングケアラーへの支援","家族のケアを担ってきた当事者と支援団体代表らが、学校に知られたくない本人の思いと、行政・学校の介入のあり方を議論。","2026年6月頃","3b1jOC0cKBw"],
+[8,"苦しむ児童生徒","◎","【ヤングケアラー】「みんなは勉強しているのに母の介護を‥」“若い時から親の介護“実態は？元介護士 #EXIT りんたろー。と考える｜#アベプラ","ヤングケアラーの実態","若くして親の介護を担う当事者の生活と、学業・友人関係への影響を、元介護士のりんたろー。氏と考える。","2020年7月頃","Oinn030Kw_E"],
+[8,"苦しむ児童生徒","◎","【児童相談所】虐待通報のイメージ強すぎ？児相にお世話になり「助言に救われた」母親の本音｜アベプラ","虐待と児童相談所の役割","児相に通報された経験のある母親と専門家が、虐待対応の現場と「児相介入＝マイナス」というイメージの変え方を議論。","2026年6月頃","mQF7UzHGx-4"],
+[8,"苦しむ児童生徒","○","【虐待】なぜ暴力を止められない？ワンオペで心の余裕がない？親たちの本音と向き合う｜アベプラ","虐待に至る親の背景","ワンオペ育児などで追い詰められ子どもに手をあげてしまう親の本音から、虐待の背景と予防を考える。","2025年2月","tjxvMyt_Ty4"],
+[9,"運動能力不足","△","【本田圭佑前半】子どもの全国大会は必要？試合に勝る練習はない？スポーツの教育的な価値を議論｜アベプラ","子どものスポーツの教育的価値","本田圭佑氏考案のU10大会を軸に、子どもの自主性とスポーツの意義を議論。※運動能力低下そのものを扱う動画は見つからず。","2023年7月頃","upIHMlBVHxE"],
+[10,"いじめ","◎","【いじめ問題】過去最多に…被害者を生まない努力も？学校では限界？無くす方法は？下田美咲＆元文科副大臣・義家弘介らと考える｜アベプラ","いじめの認知件数増加と対策","元中学校教師や元文科副大臣、いじめ対策NPOらが、学校の対応の限界といじめを無くす方法を議論。","2026年9月","z0TTbNFnn1U"],
+[10,"いじめ","◎","【学校に防犯カメラ】いじめ・盗撮を防げる？子どもの安全かプライバシーか…校内への設置はどこまで許される？｜アベプラ","いじめ発見と校内カメラ","いじめの早期発見や盗撮防止のための校内カメラ設置について、安全とプライバシーの両面から議論。","2026年10月頃","i9kKZzD7EGQ"],
+[10,"いじめ","○","【いじめ後遺症】「今でも夢に見る」一生ものの心の傷…15年以上苦しむ当事者に聞く｜アベプラ","いじめが残す長期的な影響","15年以上いじめの後遺症に苦しむ当事者と心療内科医が、心の傷の深刻さと向き合い方を語る。","2025年12月頃","foTtNvs6FVk"],
+[11,"不登校","◎","【不登校の親】「学校に行きなさい」促し続け後悔…子どものSOSにどう向き合う？登校させる？休ませる？経験者＆専門家と考える｜アベプラ","不登校の子への親の向き合い方","子どもが不登校の保護者と元教員の大学教授らが、登校を促すか休ませるか、子どものSOSへの対応を議論。","2026年8月","ecA2vWj9Xr8"],
+[11,"不登校","◎","【理由なき不登校】行けない理由は様々…葛藤する親＆元当事者と考える｜アベプラ","理由がはっきりしない不登校","不登校の子をもつ親、元当事者、フリースクール運営者らが、理由が多様化する不登校と居場所づくりを議論。","2026年6月頃","eeQ2X3jIztE"],
+[11,"不登校","◎","【不登校】理由に「やる気が出ない」「なんとなく」一体なぜ？無理させない親も増加？｜アベプラ","増加する不登校の背景","「やる気が出ない」などを理由とする不登校の増加と、無理に登校させない親の増加について議論。","2024年11月","2u1OsdTe6vQ"],
+[11,"不登校","○","【ホームスクーリング】不登校で家で勉強…学びの偏りや社会性の不安は？メリットデメリット｜アベプラ","学校以外の学びの選択肢","不登校の子が家庭で学ぶホームスクーリングの利点と、学びの偏り・社会性への不安を議論。","2025年4月","hoPze1XSe98"],
+[12,"校則、制服、髪染め制限","◎","【校則に不満】中学生が市議会に請願を提出し不採択に…ルール作りに生徒の声は必要？どう変えればいい？｜アベプラ","校則見直しと生徒参加","校則に不満を持った中学生が市議会へ請願した事例から、ルール作りに生徒の声をどう反映するかを議論。","2025年頃","A54GMrxKYwc"],
+[12,"校則、制服、髪染め制限","○","【校則】大人が勝手に決めた“子どもらしさ“メイクや恋愛に独自ルール&鬼滅もPG12制限 大人と子どもの境界は？【EXIT】｜#アベプラ","校則が求める「子どもらしさ」","メイクや恋愛を制限する校則などを例に、大人が決める「子どもらしさ」と大人・子どもの境界を議論。","2020年頃","uCS1pbInxLg"],
+[13,"教師の現状","◎","【学校の先生】合格者の7割が辞退？魅力的じゃなくなったワケ…教育現場のブラック化の歯止め策は？｜アベプラ","教員志望者の減少","教員採用の辞退が相次ぐ背景にある長時間労働などの「ブラック化」と、その歯止め策を議論。","2024年11月頃","pQDBwp2G4jw"],
+[13,"教師の現状","◎","【働き方】小学校の先生は夏休みヒマなのか？学校開放する余裕ナシ？ひろゆき×教師たち｜アベプラ","教員の働き方と夏休み","現役・元小学校教員が、夏休みも続く業務の実態と、国が求める学校開放の是非をひろゆき氏と議論（No.20にも関連）。","2026年8月頃","1S-QlJJzYqA"],
+[13,"教師の現状","○","【教員とは】新任教師の退職が過去最多に？負担が大きい？給料が安い？｜アベプラ","新任教員の早期退職","新任教員の退職が増える背景として、業務負担や待遇の問題を議論。","2025年頃","WMEzNHxSrT8"],
+[13,"教師の現状","○","【#教師のバトン】現役教師「閉鎖的な組織」先生たちがブラック労働をTwitterに暴露？前川喜平元文科事務次官と考える教師の働き方改革【EXIT】｜#アベプラ","教員の働き方改革","文科省の「#教師のバトン」で現場の過酷な労働実態が噴出した件を、前川喜平元事務次官と考える。","2021年4月頃","I-9wbZEQE7A"],
+[14,"部活動問題","◎","【文武両道】ひろゆき「授業以外も教育」なぜ勉強とスポーツの両立が強制？顧問になる教師の負担は？校長先生と考える【ブラック部活】｜#アベプラ","部活動と顧問の負担","部活動が事実上強制される仕組みと、顧問を担う教員の負担（ブラック部活）を校長らと議論。※「地域移行」を主題にした動画は見つからず。","2021年7月頃","msNkZcCLeo4"],
+[14,"部活動問題","○","【部活バス】事故を踏まえ…禁止は最適解？コストの課題も…安全どう確保？｜アベプラ","部活動の遠征と安全管理","部活動の移動中の事故を受け、バス利用禁止の是非と安全確保・費用負担を、顧問の校長らと議論。","2026年5月頃","SbhdgfvAzrc"],
+[15,"体罰","◎","【戸塚ヨットスクール】「体罰は善」共感した若者がYoutubeを運営。理不尽に耐性がつく？支持者と議論｜アベプラ","体罰肯定論への反論","「体罰は善」とする戸塚ヨットスクールの考えに共感する若者と、体罰が教育として成り立つのかを議論。","2024年9月頃","xjY30O3ZT5c"],
+[15,"体罰","◎","【戸塚ヨットスクール】“悪ガキ”どう指導？AIにスグ聞くってダメ？戸塚校長と激論｜アベプラ","厳しい指導と体罰の境界","戸塚宏校長と、問題行動をする子どもへの指導のあり方や体罰の是非を激論。","2025年12月","ZMV0ixAsn7E"],
+[15,"体罰","○","【子どもを叩いた親】2人に1人が経験…子どもに通報されるケースも…言っても聞かない時どうする？体罰としつけの境界を考える｜アベプラ","家庭での体罰としつけ","叩いて育てた父親とその息子、叩いて後悔する母親らが、体罰としつけの境界を議論（家庭が中心）。","2026年10月頃","bEkmndzr8-Y"],
+[16,"モンスターペアレント","◎","【苦情】なんでもモンスターペアレンツ扱い？保護者のお願いorクレーム どう線引き？｜アベプラ","保護者の要望と苦情の線引き","保護者の正当な要望と理不尽なクレームの境目、学校側の受け止め方を議論。","2025年4月頃","R6BwtKZMRhw"],
+[16,"モンスターペアレント","◎","【異例】なぜ校長が教育委を提訴？現場の教師はつらいよ…モンペ対応の現実｜アベプラ","保護者対応と組織的支援","保護者対応をめぐり校長が教育委員会を提訴した事例から、教員を守る組織的な対応のあり方を元教師らと議論。","2025年12月頃","AsZ2SgR7brI"],
+[17,"英語教育の早期化","◎","【英語教育】話せるだけじゃダメ？AI時代に学ぶ意味は？結局、いつから学べばいいの？｜アベプラ","英語を学び始める時期","英語学習を始める適切な時期と、AI時代に求められる英語力を議論（No.2と同じ動画）。","2026年1月","kx1ZYjXPJFo"],
+[17,"英語教育の早期化","○","【英語】苦手意識の理由に恥じらい？文法が大切？とにかく話す？日本語禁止の合宿に潜入｜アベプラ","日本人の英語苦手意識","日本語禁止の英語合宿を取材し、苦手意識の原因や文法重視か会話重視かを議論。","2025年3月","AGhHpzgYQZ4"],
+[17,"英語教育の早期化","○","【バイリンガル教育】家族間コミュニケーションでは重要？2言語を教えるメリデメは？当事者と考える｜アベプラ","幼少期からの2言語教育","幼い頃から2言語を教えるメリット・デメリットと、母語の育成との兼ね合いを当事者と考える。","2024年8月","4X9A1c5xg3c"],
+[18,"日常に使わない教科の必要性","◎","【天才数学者】人生に必要？算数で十分？文系でもマスト？「理論的に考える癖をつけるため」天才数学者×ひろゆきが議論！｜#アベプラ","数学を学ぶ意義","数学は算数で十分か、文系にも必要かを数学者とひろゆき氏が議論し、論理的思考を養う意義を示す。","2021年4月頃","dVokaI1keQE"],
+[19,"食育","○","【給食問題】量が少なすぎると話題に…物価高で給食の質はどうなる？無償化の影響は？栄養教諭と専門家が学校給食の課題を議論｜アベプラ","学校給食の課題","栄養士研究会会長と専門家が、物価高や無償化が学校給食の量・質に与える影響を議論。","2026年10月頃","zVu2RT8N21U"],
+[20,"地域と学校","△","【働き方】小学校の先生は夏休みヒマなのか？学校開放する余裕ナシ？ひろゆき×教師たち｜アベプラ","学校を地域の居場所にする是非","子どもの居場所として学校施設を開放する国の要請と、教員の負担を議論。※コミュニティ・スクールを主題にした動画は見つからず。","2026年8月頃","1S-QlJJzYqA"],
+[20,"地域と学校","△","【こども食堂】行政の下請け状態に？“いいことバイアス“で現場疲弊？ボランティアは限界？こども食堂の第一人者に聞く｜アベプラ","地域で子どもを支える活動","地域のこども食堂が担う役割の広がりと、行政任せ・善意頼みの運営の限界を議論。","2025年6月頃","3aXgsRPPaLY"],
+[21,"ボランティア活動と学校","△","【こども食堂】行政の下請け状態に？“いいことバイアス“で現場疲弊？ボランティアは限界？こども食堂の第一人者に聞く｜アベプラ","ボランティア頼みの限界","こども食堂を支えるボランティアの疲弊を通して、善意に頼る活動の課題を考える。※学校のボランティア活動を扱う動画は見つからず。","2025年6月頃","3aXgsRPPaLY"]
+];
+const FIGS=new Set(["-88s-twqJ_8", "1S-QlJJzYqA", "2u1OsdTe6vQ", "3ETI3yQg6Pk", "3aXgsRPPaLY", "3b1jOC0cKBw", "4X9A1c5xg3c", "A54GMrxKYwc", "AGhHpzgYQZ4", "AsZ2SgR7brI", "I-9wbZEQE7A", "K_5F2sIiOxw", "Oinn030Kw_E", "R6BwtKZMRhw", "SbhdgfvAzrc", "WMEzNHxSrT8", "ZMV0ixAsn7E", "_Uh_NK6oZVg", "_vH9y9772Ec", "bEkmndzr8-Y", "bKXY_cuR67U", "dVokaI1keQE", "eJKc5U1fiWw", "ecA2vWj9Xr8", "eeQ2X3jIztE", "eqpFjUi1-wo", "foTtNvs6FVk", "hoPze1XSe98", "hzkuQmDD94g", "i9kKZzD7EGQ", "kiJGdVhSrZk", "kx1ZYjXPJFo", "lP4XAclYTeg", "mQF7UzHGx-4", "msNkZcCLeo4", "pQDBwp2G4jw", "tJ4Srev19EI", "tjxvMyt_Ty4", "u87TE-G_lo0", "uCS1pbInxLg", "xjY30O3ZT5c", "z0TTbNFnn1U", "zVu2RT8N21U"]);
+const $=id=>document.getElementById(id);
+const esc=s=>s.replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const topics=[...new Map(D.map(r=>[r[0],r[1]])).entries()];
+topics.forEach(([n,t])=>{const o=document.createElement("option");o.value=n;o.textContent=n+". "+t;$("topic").appendChild(o);});
+function render(){
+  const tp=$("topic").value, rl=$("rel").value, q=$("q").value.trim().toLowerCase();
+  const fo=$("figonly").checked;
+  const rows=D.filter(r=>(!fo||FIGS.has(r[7]))&&(!tp||r[0]==tp)&&(!rl||r[2]===rl)&&(!q||(r[1]+r[3]+r[4]+r[5]).toLowerCase().includes(q)));
+  $("count").textContent=rows.length+" 件";
+  let html="",cur=null;
+  rows.forEach(r=>{
+    if(r[0]!==cur){ if(cur!==null) html+="</section>"; cur=r[0];
+      const part=PARTS[r[0]]?`<span class="part">${PARTS[r[0]]}</span>`:"";
+      html+=`<section><h2><span class="no">${r[0]}</span>${esc(r[1])}${part}</h2>`; }
+    const ov=esc(r[5]).replace(/(※.*)$/,'<span class="note">$1</span>');
+    html+=`<div class="card"><div class="top"><span class="badge b-${r[2]}">${r[2]}</span><div>
+      <div class="title"><a href="https://youtu.be/${r[7]}" target="_blank" rel="noopener">${esc(r[3])}</a></div>
+      <span class="theme">${esc(r[4])}</span><p class="ov">${ov}</p>
+      ${FIGS.has(r[7])?`<button class="figbtn" type="button" data-id="${r[7]}" aria-expanded="false">▶ インフォグラフィックを表示</button><div class="figbox" hidden><button class="fig" type="button" data-id="${r[7]}" data-cap="${esc(r[4])}" aria-label="図解を拡大"><img data-src="img/${r[7]}.png" alt="${esc(r[4])}の図解"></button><div class="note">クリックで拡大</div></div>`:""}
+      <div class="meta">公開時期（目安）：${r[6]}　｜　youtu.be/${r[7]}</div></div></div></div>`;
+  });
+  if(cur!==null) html+="</section>";
+  $("list").innerHTML=html||'<p class="note" style="margin-top:24px">該当する動画はありません。</p>';
+}
+["topic","rel","q","figonly"].forEach(id=>$(id).addEventListener("input",render));
+$("list").addEventListener("click",e=>{const t=e.target.closest(".figbtn");if(t){const box=t.nextElementSibling;const open=box.hidden;box.hidden=!open;t.setAttribute("aria-expanded",open);t.textContent=(open?"▼ インフォグラフィックを隠す":"▶ インフォグラフィックを表示");const im=box.querySelector("img");if(open&&!im.src)im.src=im.dataset.src;return;}
+  const b=e.target.closest(".fig");if(!b)return;const id=b.dataset.id;
+  $("lbimg").src="img/"+id+".png";$("lbimg").alt=b.dataset.cap+"の図解";$("lbcap").textContent=b.dataset.cap;$("lbopen").href="img/"+id+".png";$("lb").classList.add("open");});
+function closeLb(){$("lb").classList.remove("open");}
+$("lbclose").addEventListener("click",closeLb);
+$("lb").addEventListener("click",e=>{if(e.target.id==="lb")closeLb();});
+document.addEventListener("keydown",e=>{if(e.key==="Escape")closeLb();});
+render();
+</script>
+</body>
+</html>
